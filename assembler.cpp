@@ -20,6 +20,7 @@ std::vector<std::string> assembler::split(const std::string& s, char delimiter)
 //and then the OPCODE for mov r64, imm64 (immediate value/holder), which in this case is 0xBF for RDI, but differs as for example on RSI it is set to 0xBE ( ;) )
 std::pair<std::vector<unsigned char>, std::vector<std::string>> assembler::assemble(const std::string& assembly)
 {
+    static bool indirect_jmp; // edit manually
     std::vector<unsigned char> bytes;
     std::vector<std::string> placeholder_lines;
 
@@ -69,7 +70,13 @@ std::pair<std::vector<unsigned char>, std::vector<std::string>> assembler::assem
             }
             else if (mnemonic == "jmp") {
                 //relative jmp with 32-bit displacement
-                bytes.push_back(0xe9);
+                if(!indirect_jmp)
+                    bytes.push_back(0xe9);
+                else
+                {
+                    bytes.push_back(0xff);
+                    bytes.push_back(0x25);
+                }
 
 
                 //extract the displacement holder/value
