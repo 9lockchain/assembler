@@ -62,6 +62,7 @@ std::pair<std::vector<unsigned char>, std::vector<std::string>> assembler::assem
                 std::stringstream ss;
                 ss << std::hex << imm_str;
                 ss >> imm;
+                
                 //copy the immediate value holder
                 unsigned char* p_imm = reinterpret_cast<unsigned char*>(&imm);
                 for (int i = 0; i < 8; ++i) {
@@ -70,12 +71,15 @@ std::pair<std::vector<unsigned char>, std::vector<std::string>> assembler::assem
             }
             else if (mnemonic == "jmp") {
                 //relative jmp with 32-bit displacement
-                if(!indirect_jmp)
-                    bytes.push_back(0xe9);
-                else
+                if(indirect_jmp)
                 {
+                    
                     bytes.push_back(0xff);
                     bytes.push_back(0x25);
+                }
+                else
+                {
+                    bytes.push_back(0xe9);
                 }
 
 
